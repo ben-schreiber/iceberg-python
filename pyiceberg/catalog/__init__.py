@@ -97,6 +97,7 @@ class CatalogType(Enum):
     GLUE = "glue"
     DYNAMODB = "dynamodb"
     SQL = "sql"
+    NESSIE = "nessie"
 
 
 def load_rest(name: str, conf: Properties) -> Catalog:
@@ -140,6 +141,17 @@ def load_sql(name: str, conf: Properties) -> Catalog:
     except ImportError as exc:
         raise NotInstalledError(
             "SQLAlchemy support not installed: pip install 'pyiceberg[sql-postgres]' or pip install 'pyiceberg[sql-sqlite]'"
+        ) from exc
+
+
+def load_nessie(name: str, conf: Properties) -> Catalog:
+    try:
+        from pyiceberg.catalog.nessie import NessieCatalog
+
+        return NessieCatalog(name, **conf)
+    except ImportError as exc:
+        raise NotInstalledError(
+            "Nessie support not installed: pip install 'pyiceberg[nessie]'"
         ) from exc
 
 
